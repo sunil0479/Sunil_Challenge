@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Test HTTP request (should be redirected to HTTPS)
+http_response=$(curl -s -o /dev/null -w "%{http_code}" http://your_server_hostname_or_ip)
+if [ $http_response -ne 301 ]; then
+    echo "HTTP test failed"
+    exit 1
+fi
+
+# Test HTTPS request (should return 200 OK)
+https_response=$(curl -s -o /dev/null -w "%{http_code}" https://your_server_hostname_or_ip)
+if [ $https_response -ne 200 ]; then
+    echo "HTTPS test failed"
+    exit 1
+fi
+
+echo "All tests passed successfully!"

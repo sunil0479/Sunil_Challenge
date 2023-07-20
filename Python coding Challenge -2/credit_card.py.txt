@@ -1,0 +1,26 @@
+import re
+
+def is_valid_credit_card(card_number)
+    pattern = r'^[456]([d]{15}[d]{3}(-[d]{4}){3})$'
+    if not re.match(pattern, card_number)
+        return False
+
+    card_number = card_number.replace('-', '')
+
+    for i in range(len(card_number) - 3)
+        if card_number[i] == card_number[i + 1] == card_number[i + 2] == card_number[i + 3]
+            return False
+
+    return True
+
+def main()
+    n = int(input().strip())
+    for _ in range(n)
+        card_number = input().strip()
+        if is_valid_credit_card(card_number)
+            print(Valid)
+        else
+            print(Invalid)
+
+if __name__ == __main__
+    main()

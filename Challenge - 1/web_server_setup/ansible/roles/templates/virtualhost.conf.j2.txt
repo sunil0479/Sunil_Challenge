@@ -1,0 +1,28 @@
+<VirtualHost *:80>
+    ServerName {{ ansible_fqdn }}
+    DocumentRoot /var/www/html
+
+    Redirect permanent / https://{{ ansible_fqdn }}/
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    ServerName {{ ansible_fqdn }}
+    DocumentRoot /var/www/html
+
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/server.crt
+    SSLCertificateKeyFile /etc/ssl/private/server.key
+
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+
+    <Directory /var/www/html>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+</VirtualHost>
+</IfModule>

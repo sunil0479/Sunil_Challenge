@@ -1,0 +1,22 @@
+---
+- name: Deploy and secure web server
+  hosts: web-servers
+  become: true
+
+  roles:
+    - web_server
+
+  tasks:
+    - name: Redirect HTTP to HTTPS
+      lineinfile:
+        path: /etc/apache2/sites-available/000-default.conf
+        regexp: "^\\s*RedirectMatch\\s+^/(.*)$\\s+https://{{ ansible_fqdn }}/\$1"
+        line: "RedirectMatch ^/(.*)$ https://{{ ansible_fqdn }}/$1"
+        state: present
+        backrefs: yes
+
+- name: Restart Apache
+  service:
+    name: apache2
+    state: restarted
+  tags: web_server

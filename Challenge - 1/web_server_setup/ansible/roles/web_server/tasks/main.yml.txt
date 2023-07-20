@@ -1,0 +1,45 @@
+---
+- name: Install Apache web server
+  apt:
+    name: apache2
+    state: present
+
+- name: Enable mod_ssl (for HTTPS)
+  apache2_module:
+    name: ssl
+    state: present
+
+- name: Install OpenSSL
+  apt:
+    name: openssl
+    state: present
+
+- name: Generate a self-signed SSL certificate
+  openssl_certificate:
+    path: /etc/ssl/certs/server.crt
+    privatekey_path: /etc/ssl/private/server.key
+    common_name: "{{ ansible_fqdn }}"
+    owner: root
+    group: root
+    mode: '0644'
+    state: present
+
+- name: Create Apache VirtualHost configuration
+  template:
+    src: virtualhost.conf.j2
+    dest: /etc/apache2/sites-available/{{ ansible_fqdn }}.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart Apache
+
+- name: Enable the virtual host
+  apache2_module:
+    name: vhost_alias
+    state: present
+
+- name: Enable the new virtual host configuration
+  apache2_vhost:
+    state: present
+    definition: "{{ ansible_fqdn }}"
